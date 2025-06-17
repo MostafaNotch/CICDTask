@@ -1,11 +1,14 @@
 name: Manual Deployment
 
 on:
-  workflow_dispatch:  # Manual trigger from the GitHub UI
+  workflow_run:
+    workflows: ["Build and Publish Artifact"]  # Name of the other workflow
+    types:
+      - completed
 
 jobs:
   deploy:
-    name: Deploy from Artifact
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: self-hosted
 
     steps:
@@ -16,20 +19,12 @@ jobs:
           path: ${{ github.workspace }}\deploy
 
       - name: Show downloaded files
-        run: |
-          echo "Files downloaded to:"
-          dir "${{ github.workspace }}\deploy"
+        run: dir "${{ github.workspace }}\deploy"
 
-      - name: Deploy to IIS (or test path)
+      - name: Deploy to IIS
         run: |
-          echo "Deploying to target location..."
           if (Test-Path "C:\inetpub\wwwroot\SalesPrompter") {
             Remove-Item "C:\inetpub\wwwroot\SalesPrompter" -Recurse -Force
           }
           mkdir "C:\inetpub\wwwroot\SalesPrompter"
           xcopy "${{ github.workspace }}\deploy\*" "C:\inetpub\wwwroot\SalesPrompter" /s /e /y
-
-      - name: Confirm copied files
-        run: |
-          echo "Verifying files in target folder:"
-          dir "C:\inetpub\wwwroot\SalesPrompter"
