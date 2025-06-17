@@ -1,0 +1,35 @@
+name: Manual Deployment
+
+on:
+  workflow_dispatch:  # Manual trigger from the GitHub UI
+
+jobs:
+  deploy:
+    name: Deploy from Artifact
+    runs-on: self-hosted
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: SalesTaxApp
+          path: ${{ github.workspace }}\deploy
+
+      - name: Show downloaded files
+        run: |
+          echo "Files downloaded to:"
+          dir "${{ github.workspace }}\deploy"
+
+      - name: Deploy to IIS (or test path)
+        run: |
+          echo "Deploying to target location..."
+          if (Test-Path "C:\inetpub\wwwroot\SalesPrompter") {
+            Remove-Item "C:\inetpub\wwwroot\SalesPrompter" -Recurse -Force
+          }
+          mkdir "C:\inetpub\wwwroot\SalesPrompter"
+          xcopy "${{ github.workspace }}\deploy\*" "C:\inetpub\wwwroot\SalesPrompter" /s /e /y
+
+      - name: Confirm copied files
+        run: |
+          echo "Verifying files in target folder:"
+          dir "C:\inetpub\wwwroot\SalesPrompter"

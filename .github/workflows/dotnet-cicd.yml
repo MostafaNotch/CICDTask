@@ -1,75 +1,72 @@
-name: .NET CI/CD Pipeline
+# name: .NET CI/CD Pipeline
 
-on:
-  pull_request:
-      branches:
-      - main
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-env:
-  DOTNET_VERSION: '8.0.x'
+# env:
+#   DOTNET_VERSION: '8.0.x'
 
-jobs:
-  build-test-publish:
-    name: Build, Test, and Publish
-    runs-on: windows-latest
+# jobs:
+#   build-test-publish:
+#     name: Build, Test, and Publish
+#     runs-on: windows-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+#       - name: Setup .NET SDK
+#         uses: actions/setup-dotnet@v4
+#         with:
+#           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore dependencies
-        run: dotnet restore SalesTax.sln
+#       - name: Restore dependencies
+#         run: dotnet restore SalesTax.sln
 
-      - name: Build solution
-        run: dotnet build SalesTax.sln --configuration Release --no-restore
+#       - name: Build solution
+#         run: dotnet build SalesTax.sln --configuration Release --no-restore
 
-      - name: Run unit tests
-        run: dotnet test SalesTaxTests/SalesTaxTests.csproj --verbosity quiet
+#       - name: Run unit tests
+#         run: dotnet test SalesTaxTests/SalesTaxTests.csproj --verbosity quiet
 
-      - name: Publish app
-        run: dotnet publish SalesPrompter/SalesPrompter.csproj --configuration Release --output ./publish
+#       - name: Publish app
+#         run: dotnet publish SalesPrompter/SalesPrompter.csproj --configuration Release --output ./publish
 
-      - name: Upload published files as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: SalesTaxApp
-          path: ./publish
+#       - name: Upload published files as artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: SalesTaxApp
+#           path: ./publish
 
-  deploy:
-    name: Deploy from Artifact
-    runs-on: self-hosted
-    needs: build-test-publish
+#   deploy:
+#     name: Deploy from Artifact
+#     runs-on: self-hosted
+#     needs: build-test-publish
 
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: SalesTaxApp
-          path: ${{ github.workspace }}\deploy
+#     steps:
+#       - name: Download artifact
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: SalesTaxApp
+#           path: ${{ github.workspace }}\deploy
 
-      - name: Show downloaded files
-        run: |
-          echo "Files downloaded to:"
-          dir "${{ github.workspace }}\deploy"
+#       - name: Show downloaded files
+#         run: |
+#           echo "Files downloaded to:"
+#           dir "${{ github.workspace }}\deploy"
 
-      - name: Deploy to IIS (or test path)
-        run: |
-          echo "Deploying to target location..."
-          if (Test-Path "C:\inetpub\wwwroot\SalesPrompter") {
-            Remove-Item "C:\inetpub\wwwroot\SalesPrompter" -Recurse -Force
-          }
-          mkdir "C:\inetpub\wwwroot\SalesPrompter"
-          xcopy "${{ github.workspace }}\deploy\*" "C:\inetpub\wwwroot\SalesPrompter" /s /e /y
+#       - name: Deploy to IIS (or test path)
+#         run: |
+#           echo "Deploying to target location..."
+#           if (Test-Path "C:\inetpub\wwwroot\SalesPrompter") {
+#             Remove-Item "C:\inetpub\wwwroot\SalesPrompter" -Recurse -Force
+#           }
+#           mkdir "C:\inetpub\wwwroot\SalesPrompter"
+#           xcopy "${{ github.workspace }}\deploy\*" "C:\inetpub\wwwroot\SalesPrompter" /s /e /y
 
-      - name: Confirm copied files
-        run: |
-          echo "Verifying files in target folder:"
-          dir "C:\inetpub\wwwroot\SalesPrompter"
+#       - name: Confirm copied files
+#         run: |
+#           echo "Verifying files in target folder:"
+#           dir "C:\inetpub\wwwroot\SalesPrompter"
