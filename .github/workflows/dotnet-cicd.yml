@@ -63,7 +63,7 @@ jobs:
           if (Test-Path "C:\inetpub\wwwroot\SalesPrompter") {
             Remove-Item "C:\inetpub\wwwroot\SalesPrompter" -Recurse -Force
           }
-          mkdir "C:\SalesPrompter"
+          mkdir "C:\inetpub\wwwroot\SalesPrompter"
           xcopy "${{ github.workspace }}\deploy\*" "C:\inetpub\wwwroot\SalesPrompter" /s /e /y
 
       - name: Confirm copied files
