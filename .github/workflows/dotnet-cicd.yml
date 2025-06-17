@@ -60,13 +60,13 @@ jobs:
       - name: Deploy to IIS (or test path)
         run: |
           echo "Deploying to target location..."
-          if (Test-Path "C:\SalesPrompter") {
-            Remove-Item "C:\SalesPrompter" -Recurse -Force
+          if (Test-Path "C:\inetpub\wwwroot\SalesPrompter") {
+            Remove-Item "C:\inetpub\wwwroot\SalesPrompter" -Recurse -Force
           }
           mkdir "C:\SalesPrompter"
-          xcopy "${{ github.workspace }}\deploy\*" "C:\SalesPrompter" /s /e /y
+          xcopy "${{ github.workspace }}\deploy\*" "C:\inetpub\wwwroot\SalesPrompter" /s /e /y
 
       - name: Confirm copied files
         run: |
           echo "Verifying files in target folder:"
-          dir "C:\SalesPrompter"
+          dir "C:\inetpub\wwwroot\SalesPrompter"
