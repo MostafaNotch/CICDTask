@@ -1,32 +1,32 @@
-# name: .NET CI Pipeline
+name: .NET CI Pipeline
 
-# on:
-#   pull_request:
-#       branches:
-#       - main
+on:
+  pull_request:
+      branches:
+      - main
 
-# env:
-#   DOTNET_VERSION: '8.0.x'
+env:
+  DOTNET_VERSION: '8.0.x'
 
-# jobs:
-#   build-test-publish:
-#     name: Build, and Test
-#     runs-on: windows-latest
+jobs:
+  build-test-publish:
+    name: Build, and Test
+    runs-on: windows-latest
 
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-#       - name: Setup .NET SDK
-#         uses: actions/setup-dotnet@v4
-#         with:
-#           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-#       - name: Restore dependencies
-#         run: dotnet restore SalesTax.sln
+      - name: Restore dependencies
+        run: dotnet restore SalesTax.sln
 
-#       - name: Build solution
-#         run: dotnet build SalesTax.sln --configuration Release --no-restore
+      - name: Build solution
+        run: dotnet build SalesTax.sln --configuration Release --no-restore
 
-#       - name: Run unit tests
-#         run: dotnet test SalesTaxTests/SalesTaxTests.csproj --verbosity quiet
+      - name: Run unit tests
+        run: dotnet test SalesTaxTests/SalesTaxTests.csproj --verbosity quiet
