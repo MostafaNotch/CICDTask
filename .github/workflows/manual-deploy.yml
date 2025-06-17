@@ -7,7 +7,6 @@ jobs:
   deploy:
     name: Deploy to Production
     runs-on: self-hosted
-    needs: build-test-publish
     environment: production
 
     steps:
